@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Settings</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav" id="sidebar-nav">
+                <!-- populated based on role -->
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="topbar-title">Account Settings</div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-badge" id="topbar-tenant">ALL TENANTS</div>
+                <div class="flex items-center gap-2 topbar-user-area" style="position: relative;">
+                    <span id="topbar-username" style="font-size: 14px; font-weight: 600;">User</span>
+                    <i data-lucide="chevron-down" style="cursor: pointer;" onclick="showUserMenu()"></i>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> Profile &
+                            Settings</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="grid" style="display: grid; grid-template-columns: 240px 1fr; gap: 24px;">
+                <div class="flex flex-col gap-2">
+                    <button class="btn btn-secondary"
+                        style="justify-content: flex-start; background: #F0F7FF; border-color: var(--accent);">
+                        <i data-lucide="user"></i> Personal Profile
+                    </button>
+                    <button class="btn btn-secondary" style="justify-content: flex-start;">
+                        <i data-lucide="bell"></i> Notifications
+                    </button>
+                    <button class="btn btn-secondary" style="justify-content: flex-start;">
+                        <i data-lucide="lock"></i> Security
+                    </button>
+                    <button class="btn btn-secondary" style="justify-content: flex-start;">
+                        <i data-lucide="credit-card"></i> Billing (Admin Only)
+                    </button>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>Profile Information</div>
+                        <div class="card-body">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-input" id="profile-name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-input" id="profile-email" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <input type="text" class="form-input" id="profile-role" disabled>
+                            </div>
+                            <button class="btn btn-primary mt-4">Update Profile</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>Preferences</div>
+                        <div class="card-body flex flex-col gap-4">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold">Email Notifications</div>
+                                    <div class="text-xs text-secondary">Receive alerts for temperature excursions</div>
+                                </div>
+                                <input type="checkbox" checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-bold">Two-Factor Authentication</div>
+                                    <div class="text-xs text-secondary">Added security for cold-chain dispatch</div>
+                                </div>
+                                <input type="checkbox">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const user = initAuth();
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            populateTopbar();
+
+            document.getElementById('profile-name').value = user.name;
+            document.getElementById('profile-email').value = user.email;
+            document.getElementById('profile-role').value = user.role;
+
+            const nav = document.getElementById('sidebar-nav');
+            if (user.role === 'SYSTEM') {
+                nav.innerHTML = `
+          <a href="admin_pg_dashboard.html" class="sidebar-item"><i data-lucide="layout-dashboard"></i> <span>Dashboard</span></a>
+          <a href="admin_pg_route_planning.html" class="sidebar-item"><i data-lucide="map"></i> <span>Route Planning</span></a>
+          <a href="admin_pg_temp_monitoring.html" class="sidebar-item"><i data-lucide="thermometer"></i> <span>Temp Monitor</span></a>
+          <a href="admin_pg_cost_risk.html" class="sidebar-item"><i data-lucide="trending-up"></i> <span>Cost & Risk</span></a>
+          <a href="admin_pg_vendor_mgmt.html" class="sidebar-item"><i data-lucide="truck"></i> <span>Vendor Mgmt</span></a>
+        `;
+            } else {
+                nav.innerHTML = `
+          <a href="client_pg_overview.html" class="sidebar-item"><i data-lucide="home"></i> <span>Overview</span></a>
+          <a href="client_pg_new_order.html" class="sidebar-item"><i data-lucide="plus-circle"></i> <span>New Order</span></a>
+          <a href="client_pg_temp_monitor.html" class="sidebar-item"><i data-lucide="activity"></i> <span>Monitoring</span></a>
+          <a href="client_pg_compliance_docs.html" class="sidebar-item"><i data-lucide="file-text"></i> <span>Compliance</span></a>
+        `;
+            }
+
+            window.updateProfile = () => {
+                const newName = document.getElementById('profile-name').value;
+                const u = PHARMAFLOW_DATA.users.find(x => x.email === user.email);
+                if (u) {
+                    u.name = newName;
+                    savePharmaData();
+                    user.name = newName;
+                    localStorage.setItem('pharmaflow_user', JSON.stringify(user));
+                    alert('Profile updated successfully!');
+                    window.location.reload();
+                }
+            };
+            document.querySelector('.btn-primary.mt-4').addEventListener('click', updateProfile);
+            lucide.createIcons();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

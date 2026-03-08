@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Route Planning</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .planning-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            min-height: calc(100vh - var(--topbar-height) - 48px);
+        }
+
+        .map-card {
+            height: 100%;
+            margin-bottom: 0 !important;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #planner-map {
+            min-height: 600px;
+            height: 600px;
+            border-radius: var(--radius);
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .route-card {
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .route-card:hover {
+            border-color: var(--accent);
+            background: #F8FAFC;
+        }
+
+        .route-card.selected {
+            border-color: var(--accent);
+            background: #F0F7FF;
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .scroll-area {
+            padding-right: 8px;
+        }
+    </style>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="admin_pg_dashboard.html" class="sidebar-item">
+                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+                </a>
+                <a href="admin_pg_route_planning.html" class="sidebar-item active">
+                    <i data-lucide="map"></i> <span>Route Planning</span>
+                </a>
+                <a href="admin_pg_temp_monitoring.html" class="sidebar-item">
+                    <i data-lucide="thermometer"></i> <span>Temp Monitor</span>
+                </a>
+                <a href="admin_pg_cost_risk.html" class="sidebar-item">
+                    <i data-lucide="trending-up"></i> <span>Cost & Risk</span>
+                </a>
+                <a href="admin_pg_vendor_mgmt.html" class="sidebar-item">
+                    <i data-lucide="truck"></i> <span>Vendor Mgmt</span>
+                </a>
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+                <div class="topbar-title">Multimodal Route Engine</div>
+            </div>
+
+            <div class="flex-1 max-w-md px-6">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 text-secondary" style="width: 16px;"></i>
+                    <input type="text" class="form-input" placeholder="Search saved lanes or models..."
+                        style="padding-left: 40px; border-radius: 20px; background: rgba(0,0,0,0.03);">
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="topbar-badge">SYSTEM-WIDE PATHFINDER</div>
+                <div class="flex items-center gap-4 topbar-user-area" style="position: relative;">
+                    <div class="relative cursor-pointer">
+                        <i data-lucide="bell" style="color: var(--text-secondary);"></i>
+                        <span class="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer" onclick="showUserMenu()">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=3B82F6&color=fff" alt="User"
+                            class="w-8 h-8 rounded-full" style="width: 32px; height: 32px; border-radius: 50%;">
+                        <span id="topbar-username" style="font-size: 14px; font-weight: 600;">Admin</span>
+                        <i data-lucide="chevron-down"></i>
+                    </div>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> Control
+                            Center</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="planning-layout">
+                <div class="flex flex-col gap-6 scroll-area">
+                    <div class="card" style="border-left: 4px solid var(--accent);">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header border-b-border">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="crosshair" class="text-accent animate-pulse"></i>
+                                <span class="text-xs font-black uppercase tracking-widest">Tactical Lane
+                                    Configuration</span>
+                            </div>
+                        </div>
+                        <div class="card-body" style="padding: 32px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex flex-col gap-6">
+                                <div class="form-group mb-0">
+                                    <label
+                                        class="form-label font-black uppercase text-[10px] tracking-widest mb-3">Geographic
+                                        Origin</label>
+                                    <div class="relative">
+                                        <i data-lucide="map-pin" class="absolute left-4 top-3.5 text-accent"
+                                            style="width: 16px;"></i>
+                                        <input type="text" class="form-input h-[50px]"
+                                            style="padding-left: 44px; font-weight: 600;"
+                                            value="Mumbai Air Hub (BOM-01)" id="origin-input">
+                                    </div>
+                                </div>
+                                <div class="form-group mb-0">
+                                    <label
+                                        class="form-label font-black uppercase text-[10px] tracking-widest mb-3">Terminal
+                                        Node</label>
+                                    <div class="relative">
+                                        <i data-lucide="flag" class="absolute left-4 top-3.5 text-danger"
+                                            style="width: 16px;"></i>
+                                        <input type="text" class="form-input h-[50px]"
+                                            style="padding-left: 44px; font-weight: 600;"
+                                            value="Berlin Rail Station (BER-09)" id="dest-input">
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-4 mt-2" id="mode-filters">
+                                    <label
+                                        class="flex items-center gap-3 px-4 py-2 bg-app/50 rounded-xl text-xs font-black cursor-pointer border border-border transition-all hover:border-accent">
+                                        <input type="checkbox" value="Air" checked class="accent-accent"> <span>✈️
+                                            SKYBRIDGE</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-3 px-4 py-2 bg-app/50 rounded-xl text-xs font-black cursor-pointer border border-border transition-all hover:border-accent">
+                                        <input type="checkbox" value="Sea" checked class="accent-accent"> <span>🚢
+                                            SEAFREIGHT</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center gap-3 px-4 py-2 bg-app/50 rounded-xl text-xs font-black cursor-pointer border border-border transition-all hover:border-accent">
+                                        <input type="checkbox" value="Rail" class="accent-accent"> <span>🚄
+                                            RAILROAD</span>
+                                    </label>
+                                </div>
+
+                                <button class="btn btn-primary h-[60px] text-lg mt-4 shadow-xl shadow-accent/20"
+                                    id="search-btn">
+                                    <i data-lucide="zap"></i> Initialize Path Optimizer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="route-options" class="hidden">
+                        <div class="flex items-center justify-between mb-6 px-2">
+                            <h3 class="text-xs font-black uppercase tracking-widest text-secondary">Strategic Path
+                                Library</h3>
+                            <span class="badge badge-info shadow-sm">AI RANKED</span>
+                        </div>
+                        <div id="route-list" class="flex flex-col gap-4">
+                            <!-- Route cards populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="card bg-accent/5 border-l-4 border-accent">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header border-none pb-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="shield-alert" class="text-accent w-3 h-3"></i>
+                                <span class="text-[10px] font-black uppercase tracking-widest">Risk Mitigation
+                                    Strategy</span>
+                            </div>
+                        </div>
+                        <div class="card-body py-4">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <ul class="flex flex-col gap-3 m-0 p-0 list-none">
+                                <li class="flex items-start gap-3">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-accent mt-1"></div>
+                                    <div class="text-[10px] leading-relaxed"><strong class="text-primary">Contingency
+                                            Alpha:</strong> Redirect through Dubai if Suez Canal congestion exceeds 48h.
+                                    </div>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <div class="w-1.5 h-1.5 rounded-full bg-accent mt-1"></div>
+                                    <div class="text-[10px] leading-relaxed"><strong class="text-primary">Thermal
+                                            Guard:</strong> Enable extra coolant recharge at Frankfurt Gate for all
+                                        -70°C assets.</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card bg-app/30">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header border-none pb-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <span class="text-[10px] font-black uppercase tracking-widest">Map Simulation Legend</span>
+                        </div>
+                        <div class="card-body flex flex-col gap-4 py-4">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-1 rounded-full bg-primary"></div>
+                                <span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Optimal
+                                    Path (Recommended)</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-1 rounded-full bg-secondary opacity-50"
+                                    style="border-top: 2px dashed currentcolor;"></div>
+                                <span
+                                    class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Contingency
+                                    / Backup Lane</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-1 rounded-full bg-danger opacity-50"
+                                    style="border-top: 2px dotted currentcolor;"></div>
+                                <span class="text-[10px] font-bold text-secondary uppercase tracking-tighter">Emergency
+                                    High-Priority (Air)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card map-card relative overflow-hidden" style="flex: 1; min-height: 700px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div id="planner-map" style="position: absolute; inset: 0; z-index: 1;"></div>
+                    <div class="absolute top-6 right-6 z-[1000] flex flex-col gap-3">
+                        <button
+                            class="btn btn-secondary w-12 h-12 rounded-full shadow-2xl bg-surface/80 backdrop-blur-xl border-glass-border p-0"
+                            onclick="zoomIn()">
+                            <i data-lucide="plus" style="width: 20px;"></i>
+                        </button>
+                        <button
+                            class="btn btn-secondary w-12 h-12 rounded-full shadow-2xl bg-surface/80 backdrop-blur-xl border-glass-border p-0"
+                            onclick="zoomOut()">
+                            <i data-lucide="minus" style="width: 20px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/command-palette.js"></script>
+    <script>
+        const user = initAuth('SYSTEM');
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            lucide.createIcons();
+            populateTopbar();
+
+            const searchBtn = document.getElementById('search-btn');
+            const routeOptions = document.getElementById('route-options');
+            const routeList = document.getElementById('route-list');
+
+            let map;
+            let markers = [];
+            let lines = [];
+
+            const routeCoords = {
+                'Recommended': [
+                    PHARMAFLOW_CITY_COORDS['Mumbai'],
+                    PHARMAFLOW_CITY_COORDS['Dubai'],
+                    PHARMAFLOW_CITY_COORDS['Berlin']
+                ],
+                'Cost-Optimized': [
+                    PHARMAFLOW_CITY_COORDS['Mumbai'],
+                    { lat: 12.91, lng: 44.97 }, // Mock midpoint
+                    { lat: 29.95, lng: 32.55 }, // Suez
+                    { lat: 40.85, lng: 14.26 }, // Naples
+                    PHARMAFLOW_CITY_COORDS['Berlin']
+                ],
+                'Speed-Priority': [
+                    PHARMAFLOW_CITY_COORDS['Mumbai'],
+                    PHARMAFLOW_CITY_COORDS['Berlin']
+                ]
+            };
+
+            const lineStyles = {
+                'Recommended': { strokeColor: '#3B82F6', strokeWeight: 5, strokeOpacity: 0.8 },
+                'Cost-Optimized': { strokeColor: '#64748B', strokeWeight: 3, strokeOpacity: 0.6, icons: [{ icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 3 }, offset: '0', repeat: '20px' }] },
+                'Speed-Priority': { strokeColor: '#EF4444', strokeWeight: 3, strokeOpacity: 0.6, icons: [{ icon: { path: 'M 0,-1 0,1', strokeOpacity: 1, scale: 2 }, offset: '0', repeat: '10px' }] }
+            };
+
+            function initPlannerMap() {
+                map = L.map('planner-map', { zoomControl: false }).setView([20, 0], 2);
+
+                function getMapTiles() {
+                    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                    return isDark
+                        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                        : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+                }
+
+                let tileLayer = L.tileLayer(getMapTiles(), {
+                    attribution: '&copy; CartoDB'
+                }).addTo(map);
+
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    .animated-route { stroke-dasharray: 10, 10; animation: dash-animate 20s linear infinite; }
+                    @keyframes dash-animate { to { stroke-dashoffset: -100; } }
+                `;
+                document.head.appendChild(style);
+
+                // Theme switching
+                const observer = new MutationObserver(() => {
+                    tileLayer.setUrl(getMapTiles());
+                });
+                observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+            }
+
+            function clearMap() {
+                markers.forEach(m => map.removeLayer(m));
+                lines.forEach(l => map.removeLayer(l));
+                markers = [];
+                lines = [];
+            }
+
+            searchBtn.addEventListener('click', () => {
+                searchBtn.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i> Analyzing...';
+                lucide.createIcons();
+
+                setTimeout(() => {
+                    searchBtn.innerHTML = '<i data-lucide="search"></i> Calculate Options';
+                    lucide.createIcons();
+                    routeOptions.classList.remove('hidden');
+                    renderRoutes();
+                }, 1200);
+            });
+
+            function renderRoutes() {
+                routeList.innerHTML = '';
+                clearMap();
+
+                const selectedModes = Array.from(document.querySelectorAll('#mode-filters input:checked')).map(i => i.value);
+
+                PHARMAFLOW_DATA.route_recommendations.default.forEach((r, idx) => {
+                    const rModes = r.mode.split(' + ').map(m => m.trim());
+                    const matchMode = rModes.every(rm => selectedModes.includes(rm));
+                    if (!matchMode) return;
+
+                    const card = document.createElement('div');
+                    card.className = `route-card ${idx === 0 ? 'selected' : ''}`;
+
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="badge ${r.type === 'Recommended' ? 'badge-info' : 'badge-gray'}" style="text-transform: uppercase; font-size: 10px;">${r.type}</span>
+                            <span class="text-sm font-extrabold text-accent">$${parseFloat(r.cost).toLocaleString()}</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-sm font-bold mb-3">
+                            <div class="p-2 rounded bg-app"><i data-lucide="${r.mode.includes('Air') ? 'plane' : 'ship'}" style="width: 14px; height: 14px;"></i></div>
+                            <div>
+                                <div class="text-xs text-secondary font-normal">${r.mode}</div>
+                                <div>${r.eta_hours}h Transit</div>
+                            </div>
+                        </div>
+                    `;
+
+                    card.onclick = () => {
+                        document.querySelectorAll('.route-card').forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                        highlightOnMap(r.type);
+                    };
+
+                    routeList.appendChild(card);
+
+                    // Add to map
+                    const coords = routeCoords[r.type].map(c => [c.lat, c.lng]);
+                    const line = L.polyline(coords, {
+                        color: lineStyles[r.type].strokeColor,
+                        weight: lineStyles[r.type].strokeWeight,
+                        opacity: lineStyles[r.type].strokeOpacity,
+                        className: r.type === 'Recommended' ? '' : 'animated-route'
+                    }).addTo(map);
+                    lines.push(line);
+                });
+
+                // Add Markers for Start/End
+                const origin = PHARMAFLOW_CITY_COORDS['Mumbai'];
+                const dest = PHARMAFLOW_CITY_COORDS['Berlin'];
+
+                const m1 = L.circleMarker([origin.lat, origin.lng], { radius: 6, fillColor: "#3B82F6", color: "#fff", weight: 2, fillOpacity: 1 }).addTo(map);
+                const m2 = L.circleMarker([dest.lat, dest.lng], { radius: 6, fillColor: "#10B981", color: "#fff", weight: 2, fillOpacity: 1 }).addTo(map);
+                markers.push(m1, m2);
+
+                const bounds = L.latLngBounds(routeCoords['Cost-Optimized'].map(c => [c.lat, c.lng]));
+                map.fitBounds(bounds, { padding: [50, 50] });
+                lucide.createIcons();
+            }
+
+            function highlightOnMap(type) {
+                lines.forEach((l, i) => {
+                    const rType = PHARMAFLOW_DATA.route_recommendations.default[idx_map[i]].type;
+                    l.setStyle({ opacity: rType === type ? 1.0 : 0.2 });
+                });
+            }
+
+            // Map Index helper for highlight
+            const idx_map = [];
+            PHARMAFLOW_DATA.route_recommendations.default.forEach((r, idx) => idx_map.push(idx));
+
+            // Zoom Helpers
+            window.zoomIn = () => map.zoomIn();
+            window.zoomOut = () => map.zoomOut();
+
+            initPlannerMap();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

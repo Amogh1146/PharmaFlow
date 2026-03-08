@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Vendor Onboarding</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body class="login-layout">
+    <div class="card" style="width: 100%; max-width: 600px; padding: 0;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+        <div class="card-header" style="justify-content: center; padding: 24px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+            <div class="login-logo">Pharma<span>Flow</span> | Supplier Portal</div>
+        </div>
+        <div class="card-body" id="onboarding-form">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+            <h3 class="mb-4">Begin Your Onboarding</h3>
+            <p class="text-sm text-secondary mb-6">Join our verified cold-chain partner network. Please provide business
+                details and upload verification documents.</p>
+
+            <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="form-group">
+                    <label class="form-label">Company Name</label>
+                    <input type="text" class="form-input" id="comp-name" placeholder="Legal Entity Name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Business Email</label>
+                    <input type="email" class="form-input" id="comp-email" placeholder="contact@company.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Service Type</label>
+                <select class="form-select" id="comp-type">
+                    <option>3PL Logistics Provider</option>
+                    <option>Last-Mile Courier</option>
+                    <option>Warehousing Partner</option>
+                </select>
+            </div>
+
+            <div class="form-group mt-6">
+                <label class="form-label font-bold">Document Verification</label>
+                <div class="flex flex-col gap-3 mt-2">
+                    <div class="flex items-center justify-between p-3 border rounded">
+                        <span class="text-sm">GST/Tax Identification Certificate</span>
+                        <input type="file" id="doc-gst" style="font-size: 11px;">
+                    </div>
+                    <div class="flex items-center justify-between p-3 border rounded">
+                        <span class="text-sm">Business PAN/License</span>
+                        <input type="file" id="doc-pan" style="font-size: 11px;">
+                    </div>
+                    <div class="flex items-center justify-between p-3 border rounded">
+                        <span class="text-sm">GDP/Cold-Chain Compliance Cert</span>
+                        <input type="file" id="doc-lic" style="font-size: 11px;">
+                    </div>
+                    <div class="flex items-center justify-between p-3 border rounded">
+                        <span class="text-sm">Bank Verification (Cancelled Cheque)</span>
+                        <input type="file" id="doc-bank" style="font-size: 11px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-between">
+                <a href="shared_pg_login.html" class="btn btn-secondary">Back to Login</a>
+                <button class="btn btn-primary" onclick="submitOnboarding()">Submit Application</button>
+            </div>
+        </div>
+
+        <div class="card-body hidden" id="success-msg" style="text-align: center; padding: 40px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+            <i data-lucide="check-circle"
+                style="width: 64px; height: 64px; color: var(--success); margin: 0 auto 16px;"></i>
+            <h2>Application Submitted!</h2>
+            <p class="text-sm text-secondary mt-4">Thank you for applying. Our admin team will review your documents
+                (Verification ID: <strong>PF-SR-82</strong>).</p>
+            <p class="text-xs text-secondary mb-8">Expected review time: 24-48 working hours.</p>
+            <a href="shared_pg_login.html" class="btn btn-primary" style="width: 100%; justify-content: center;">Return
+                to Home</a>
+        </div>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script>
+        lucide.createIcons();
+        function submitOnboarding() {
+            const name = document.getElementById('comp-name').value;
+            const email = document.getElementById('comp-email').value;
+            if (!name || !email) return alert('Please enter company name and email');
+
+            // Push to persistence
+            PHARMAFLOW_DATA.vendor_onboarding.push({
+                id: 'APP' + Math.random().toString().slice(2, 5),
+                company_name: name,
+                email: email,
+                status: 'pending',
+                submitted_at: new Date().toISOString().split('T')[0],
+                docs: { gst: true, pan: true, licence: true, bank: true }
+            });
+            savePharmaData();
+
+            document.getElementById('onboarding-form').classList.add('hidden');
+            document.getElementById('success-msg').classList.remove('hidden');
+            lucide.createIcons();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

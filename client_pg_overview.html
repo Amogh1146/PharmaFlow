@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Client Dashboard</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="client_pg_overview.html" class="sidebar-item active">
+                    <i data-lucide="home"></i> <span>Overview</span>
+                </a>
+                <a href="client_pg_new_order.html" class="sidebar-item">
+                    <i data-lucide="plus-circle"></i> <span>New Order</span>
+                </a>
+                <a href="client_pg_temp_monitor.html" class="sidebar-item">
+                    <i data-lucide="activity"></i> <span>Monitoring</span>
+                </a>
+                <a href="client_pg_compliance_docs.html" class="sidebar-item">
+                    <i data-lucide="file-text"></i> <span>Compliance</span>
+                </a>
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+                <div class="topbar-title">Tenant Operations Hub</div>
+            </div>
+
+            <div class="flex-1 max-w-md px-6">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 text-secondary" style="width: 16px;"></i>
+                    <input type="text" class="form-input" placeholder="Search my orders or documents..."
+                        style="padding-left: 40px; border-radius: 20px; background: rgba(0,0,0,0.03);">
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="topbar-badge" id="topbar-tenant">LOADING...</div>
+                <div class="flex items-center gap-4 topbar-user-area" style="position: relative;">
+                    <div class="relative cursor-pointer">
+                        <i data-lucide="bell" style="color: var(--text-secondary);"></i>
+                        <span class="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer" onclick="showUserMenu()">
+                        <img src="https://ui-avatars.com/api/?name=Client+User&background=10B981&color=fff" alt="User"
+                            class="w-8 h-8 rounded-full" style="width: 32px; height: 32px; border-radius: 50%;">
+                        <span id="topbar-username" style="font-size: 14px; font-weight: 600;">Client</span>
+                        <i data-lucide="chevron-down"></i>
+                    </div>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> My
+                            Profile</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 style="font-size: 24px; font-weight: 700; color: var(--primary);">Welcome back, <span
+                            id="welcome-name">...</span></h1>
+                    <p class="text-sm text-secondary">Operational overview for <span id="tenant-display-name">...</span>
+                    </p>
+                </div>
+                <div id="licence-status">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="truck" style="color: var(--accent);"></i>
+                        <span class="badge badge-gray">Livestream</span>
+                    </div>
+                    <div class="kpi-value" id="kpi-active">0</div>
+                    <div class="kpi-label">Active Shipments</div>
+                </div>
+                <div class="kpi-card danger">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="alert-triangle" style="color: var(--danger);"></i>
+                        <span class="badge badge-danger">Critical</span>
+                    </div>
+                    <div class="kpi-value" id="kpi-risk">0</div>
+                    <div class="kpi-label">At Risk</div>
+                </div>
+                <div class="kpi-card success">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="clock" style="color: var(--success);"></i>
+                        <span class="badge badge-success">Optimized</span>
+                    </div>
+                    <div class="kpi-value" id="kpi-eta">--</div>
+                    <div class="kpi-label">Upcoming Destination</div>
+                </div>
+            </div>
+
+            <div class="grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-bottom: 32px;">
+                <div class="left-col flex flex-col gap-8">
+                    <!-- Section: Active Shipments with Customs Tracking -->
+                    <div class="card shadow-lg">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header border-b-border bg-surface/50">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="map-pin" class="text-accent"></i>
+                                <span class="text-xs font-black uppercase tracking-widest">Active Operations
+                                    Pipeline</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="table-wrap">
+                                <table id="shipments-table-v2">
+                                    <thead>
+                                        <tr>
+                                            <th>IDENTIFIER</th>
+                                            <th>ASSET CLASS</th>
+                                            <th>ROUTE LANE</th>
+                                            <th>CUSTOMS STATUS</th>
+                                            <th>ETA</th>
+                                            <th>CONTROL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="shipment-pipeline-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-lg">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header border-b-border">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="shopping-cart" class="text-accent"></i>
+                                <span class="text-xs font-black uppercase tracking-widest">Certified Material
+                                    Marketplace</span>
+                            </div>
+                            <span class="badge badge-info pulse-soft">VERIFIED STOCK</span>
+                        </div>
+                        <div class="card-body p-6">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="procurement-grid">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-col flex flex-col gap-8">
+                    <div class="card shadow-lg">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header border-b-border">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="shield-check" class="text-success"></i>
+                                <span class="text-xs font-black uppercase tracking-widest">Compliance Health</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-6">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex flex-col gap-6">
+                                <div class="p-4 bg-accent/5 rounded-xl border border-accent/20">
+                                    <div class="text-[10px] font-black uppercase text-accent mb-2">REGULATORY STATUS
+                                    </div>
+                                    <div id="licence-status-large" class="text-lg font-black italic">--</div>
+                                </div>
+                                <div class="flex items-center gap-4 p-4 border border-border rounded-xl">
+                                    <i data-lucide="file-check" class="text-success"></i>
+                                    <div>
+                                        <div class="text-xs font-bold">GDP Readiness</div>
+                                        <div class="text-[10px] text-secondary">Verified for Global Network</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4 p-4 border border-border rounded-xl">
+                                    <i data-lucide="fingerprint" class="text-accent"></i>
+                                    <div>
+                                        <div class="text-xs font-bold">Audit Path Mapping</div>
+                                        <div class="text-[10px] text-secondary">Last verified log: 2h ago</div>
+                                    </div>
+                                </div>
+                                <div class="alert-banner info mt-4">
+                                    <div class="text-[10px] leading-tight flex items-center gap-2">
+                                        <i data-lucide="info" class="w-3 h-3"></i>
+                                        All material sourcing follows GMP/ISO guidelines.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card glass shadow-lg">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header border-b-border">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="bell" class="text-danger"></i>
+                                <span class="text-xs font-black uppercase tracking-widest">Live Alert Stream</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" id="alert-stream" style="max-height: 300px; overflow-y: auto;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <!-- Populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Action Button -->
+            <div class="fab-container" id="fab-container">
+                <div class="fab-options">
+                    <a href="client_pg_new_order.html" class="fab-option"><i data-lucide="clipboard"></i> New Order</a>
+                    <a href="client_pg_temp_monitor.html" class="fab-option"><i data-lucide="activity"></i>
+                        Monitoring</a>
+                    <a href="client_pg_compliance_docs.html" class="fab-option"><i data-lucide="file-text"></i>
+                        Compliance</a>
+                </div>
+                <div class="fab-main" onclick="toggleFAB()"><i data-lucide="plus"></i></div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/command-palette.js"></script>
+    <script>
+        const user = initAuth('CLIENT');
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            lucide.createIcons();
+            populateTopbar();
+
+            document.getElementById('welcome-name').textContent = user.name.split(' ')[0];
+            document.getElementById('tenant-display-name').textContent = user.tenant_name;
+
+            // Filter Data
+            const myShipments = PHARMAFLOW_DATA.shipments.filter(s => s.tenant_id === user.tenant_id);
+            const myOrders = PHARMAFLOW_DATA.orders.filter(o => o.tenant_id === user.tenant_id);
+            const myLicences = PHARMAFLOW_DATA.drug_licences.filter(l => l.tenant_id === user.tenant_id);
+
+            // Populate KPIs
+            document.getElementById('kpi-active').textContent = myShipments.length;
+            document.getElementById('kpi-risk').textContent = myShipments.filter(s => s.status === 'at_risk').length;
+            document.getElementById('kpi-eta').textContent = myShipments.length > 0 ? myShipments[0].eta.split('-').slice(1).join('/') : '--';
+
+            // Populate Pipeline Table
+            const pipelineBody = document.getElementById('shipment-pipeline-body');
+            if (pipelineBody) {
+                myShipments.forEach(s => {
+                    const row = document.createElement('tr');
+                    const riskClass = s.status === 'at_risk' ? 'text-danger' : 'text-primary';
+                    row.innerHTML = `
+                        <td class="px-6 py-4"><span class="text-sm font-black ${riskClass}">${s.id}</span></td>
+                        <td class="px-6 py-4 text-xs font-bold text-secondary uppercase">${s.product}</td>
+                        <td class="px-6 py-4 text-[10px] font-medium">${s.origin} → ${s.destination}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                                 <div class="w-2 h-2 rounded-full ${s.customs.includes('Cleared') ? 'bg-success' : 'stroke-orange-400 bg-warning animate-pulse'}"></div>
+                                 <span class="text-[10px] font-bold uppercase">${s.customs}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-xs font-black">${s.eta}</td>
+                        <td class="px-6 py-4 text-right">
+                             <a href="shared_pg_shipment_detail.html?id=${s.id}" class="btn btn-icon btn-secondary glass"><i data-lucide="external-link" class="w-3 h-3"></i></a>
+                        </td>
+                    `;
+                    pipelineBody.appendChild(row);
+                });
+            }
+
+            // Populate Marketplace
+            const procurementGrid = document.getElementById('procurement-grid');
+            if (procurementGrid && PHARMAFLOW_DATA.procurement_catalog) {
+                PHARMAFLOW_DATA.procurement_catalog.forEach(m => {
+                    const card = document.createElement('div');
+                    card.className = 'card p-4 border border-border hover:border-accent transition-all animate-float';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-4">
+                            <i data-lucide="droplet" class="text-accent"></i>
+                            <span class="badge ${m.stock > 1000 ? 'badge-success' : 'badge-warning'}">${m.stock} Units</span>
+                        </div>
+                        <div class="text-sm font-black uppercase mb-1">${m.name}</div>
+                        <div class="text-[10px] text-secondary mb-4">${m.grade} | ${m.cert}</div>
+                        <div class="flex justify-between items-center pt-4 border-t border-border">
+                            <div class="text-xs font-bold">${formatCurrency(m.price_per_unit)}/unit</div>
+                            <a href="client_pg_new_order.html?material=${m.id}" class="text-[10px] font-black text-accent uppercase tracking-widest no-underline">Procure →</a>
+                        </div>
+                    `;
+                    procurementGrid.appendChild(card);
+                });
+            }
+
+            // Populate Alert Stream
+            const alertStream = document.getElementById('alert-stream');
+            if (alertStream) {
+                myShipments.forEach(s => {
+                    const events = PHARMAFLOW_DATA.events[s.id] || [];
+                    events.forEach(e => {
+                        const alertDiv = document.createElement('div');
+                        alertDiv.className = `p-4 border-b border-border flex gap-4 items-start ${e.event.includes('excursion') ? 'bg-danger/5' : ''}`;
+                        alertDiv.innerHTML = `
+                            <div class="pt-1"><i data-lucide="${e.event.includes('excursion') ? 'zap' : 'info'}" class="w-3 h-3 ${e.event.includes('excursion') ? 'text-danger' : 'text-accent'}"></i></div>
+                            <div>
+                                <div class="text-[11px] font-bold ${e.event.includes('excursion') ? 'text-danger' : ''}">${e.event}</div>
+                                <div class="text-[9px] text-secondary mt-1 uppercase font-mono">${e.time} | NODE: ${s.id}</div>
+                            </div>
+                        `;
+                        alertStream.appendChild(alertDiv);
+                    });
+                });
+            }
+
+            // Licence Check (Large)
+            const licenceStatusLarge = document.getElementById('licence-status-large');
+            if (licenceStatusLarge) {
+                const expired = myLicences.filter(l => l.status === 'expired');
+                const expiring = myLicences.filter(l => l.status === 'expiring');
+
+                if (expired.length > 0) {
+                    licenceStatusLarge.innerHTML = `<span class="text-danger">EXPIRED</span>`;
+                    licenceStatusLarge.className = "text-lg font-black italic text-danger";
+                } else if (expiring.length > 0) {
+                    licenceStatusLarge.innerHTML = `<span class="text-warning">ACTION REQUIRED</span>`;
+                    licenceStatusLarge.className = "text-lg font-black italic text-warning";
+                } else {
+                    licenceStatusLarge.innerHTML = `<span class="text-success">NOMINAL</span>`;
+                    licenceStatusLarge.className = "text-lg font-black italic text-success";
+                }
+            }
+            lucide.createIcons();
+        }
+
+        function toggleFAB() {
+            document.getElementById('fab-container').classList.toggle('active');
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Vendor Management</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="admin_pg_dashboard.html" class="sidebar-item"><i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span></a>
+                <a href="admin_pg_route_planning.html" class="sidebar-item"><i data-lucide="map"></i> <span>Route
+                        Planning</span></a>
+                <a href="admin_pg_temp_monitoring.html" class="sidebar-item"><i data-lucide="thermometer"></i>
+                    <span>Temp Monitor</span></a>
+                <a href="admin_pg_cost_risk.html" class="sidebar-item"><i data-lucide="trending-up"></i> <span>Cost &
+                        Risk</span></a>
+                <a href="admin_pg_vendor_mgmt.html" class="sidebar-item active"><i data-lucide="truck"></i> <span>Vendor
+                        Mgmt</span></a>
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+                <div class="topbar-title">Partner Ecosystem Control</div>
+            </div>
+
+            <div class="flex-1 max-w-md px-6">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 text-secondary" style="width: 16px;"></i>
+                    <input type="text" class="form-input" placeholder="Search partners, types or regions..."
+                        style="padding-left: 40px; border-radius: 20px; background: rgba(0,0,0,0.03);">
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="topbar-badge">ECOSYSTEM MASTER</div>
+                <div class="flex items-center gap-4 topbar-user-area" style="position: relative;">
+                    <div class="relative cursor-pointer">
+                        <i data-lucide="bell" style="color: var(--text-secondary);"></i>
+                        <span class="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer" onclick="showUserMenu()">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=3B82F6&color=fff" alt="User"
+                            class="w-8 h-8 rounded-full" style="width: 32px; height: 32px; border-radius: 50%;">
+                        <span id="topbar-username" style="font-size: 14px; font-weight: 600;">Admin</span>
+                        <i data-lucide="chevron-down"></i>
+                    </div>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> Control
+                            Center</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Main Partner Network -->
+
+            <!-- Carrier Capacity Index -->
+            <div class="card mb-8">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="card-header flex items-center justify-between">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="truck" class="text-accent"></i>
+                        <span class="text-xs font-black uppercase tracking-widest">Fleet Capacity Index</span>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 divide-x divide-border">
+                        <!-- Dynamic Capacity -->
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-secondary">AIR INDIA CARGO</span>
+                                <span class="badge badge-success">78% UTIL</span>
+                            </div>
+                            <div class="text-xl font-black">12.5 TONS AVAIL.</div>
+                            <div class="text-[10px] text-accent mt-1">PRICE: MARKET RATE</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-secondary">MAERSK COLD-CHAIN</span>
+                                <span class="badge badge-warning">62% UTIL</span>
+                            </div>
+                            <div class="text-xl font-black">45 TEUs AVAIL.</div>
+                            <div class="text-[10px] text-accent mt-1">PRICE: NEGOTIATED</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-secondary">SAFECARE ROAD</span>
+                                <span class="badge badge-info">45% UTIL</span>
+                            </div>
+                            <div class="text-xl font-black">8 TRUCKS AVAIL.</div>
+                            <div class="text-[10px] text-accent mt-1">PRICE: FIXED</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-6">
+                <div class="card flex-1 shadow-md">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="card-header flex items-center justify-between">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="globe" class="text-accent"></i>
+                            <span class="text-xs font-black uppercase tracking-widest">Active Partner Network</span>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="showAddModal()">
+                            <i data-lucide="plus"></i> Register Partner
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <table class="w-full" id="vendors-table">
+                            <thead class="sticky top-0 bg-surface z-10">
+                                <tr>
+                                    <th
+                                        class="text-left px-6 py-4 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                        Partner Entity</th>
+                                    <th
+                                        class="text-left px-6 py-4 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                        Service Type</th>
+                                    <th
+                                        class="text-left px-6 py-4 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                        Tenure</th>
+                                    <th
+                                        class="text-left px-6 py-4 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                        Status</th>
+                                    <th
+                                        class="text-right px-6 py-4 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                        Control</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div class="kpi-card success flex-1">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="shield-check" style="color: var(--success);"></i>
+                        <span class="badge badge-success">Verified</span>
+                    </div>
+                    <div class="kpi-value" id="count-approved">0</div>
+                    <div class="kpi-label">Trusted Partners</div>
+                </div>
+                <div class="kpi-card warning flex-1">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center justify-between mb-2">
+                        <i data-lucide="clock" style="color: var(--warning);"></i>
+                        <span class="badge badge-warning">Action</span>
+                    </div>
+                    <div class="kpi-value" id="count-pending">0</div>
+                    <div class="kpi-label">Onboarding Queue</div>
+                </div>
+            </div>
+
+            <div class="card bg-app/40 border-dashed border-2 border-border">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>Verification Queue</div>
+                <div class="card-body p-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <table class="w-full text-xs" id="onboarding-table">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="text-left px-4 py-3 bg-app/20 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                    Company</th>
+                                <th
+                                    class="text-right px-4 py-3 bg-app/20 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                    Review</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="card-body">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center gap-3 text-secondary text-xs font-bold mb-4">
+                        <i data-lucide="help-circle"></i> Onboarding Policy
+                    </div>
+                    <p class="text-[10px] text-secondary leading-relaxed">
+                        All partners must pass the **3-tier documentation check** (GST, PAN, Drug License)
+                        before appearing in the active network.
+                    </p>
+                </div>
+            </div>
+    </div>
+    </div>
+    </main>
+    </div>
+
+    <!-- Add Vendor Modal -->
+    <div id="vendor-modal" class="hidden"
+        style="position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        <div class="card" style="width: 400px; margin-bottom: 0;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+            <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>Register New Vendor</div>
+            <div class="card-body">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="form-group">
+                    <label class="form-label">Vendor Name</label>
+                    <input type="text" class="form-input" id="new-v-name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vendor Type</label>
+                    <select class="form-select" id="new-v-type">
+                        <option>Carrier</option>
+                        <option>Storage Provider</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button class="btn btn-secondary" onclick="hideAddModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="addVendor()">Save Partner</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/command-palette.js"></script>
+    <script>
+        const user = initAuth('SYSTEM');
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            lucide.createIcons();
+            populateTopbar();
+
+            function renderVendors() {
+                const tbody = document.querySelector('#vendors-table tbody');
+                tbody.innerHTML = '';
+                PHARMAFLOW_DATA.vendors.forEach(v => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-border hover:bg-app/10 transition-colors';
+                    row.innerHTML = `
+                        <td class="px-6 py-4"><span class="text-sm font-black text-primary uppercase">${v.name}</span></td>
+                        <td class="px-6 py-4 text-xs font-bold text-secondary uppercase">${v.type}</td>
+                        <td class="px-6 py-4 text-xs text-secondary font-medium">${v.joined_date}</td>
+                        <td class="px-6 py-4"><span class="badge ${v.status === 'approved' ? 'badge-success' : 'badge-warning'}">${v.status}</span></td>
+                        <td class="px-6 py-4 text-right">
+                             <div class="flex justify-end gap-1">
+                                <button class="btn btn-icon btn-secondary" onclick="editVendor('${v.id}')"><i data-lucide="settings-2" class="w-3 h-3"></i></button>
+                                <button class="btn btn-icon btn-secondary hover:bg-danger/20 hover:text-danger" onclick="removeVendor('${v.id}')"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                             </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                document.getElementById('count-approved').textContent = PHARMAFLOW_DATA.vendors.filter(v => v.status === 'approved').length;
+                lucide.createIcons();
+            }
+
+            function renderOnboarding() {
+                const tbody = document.querySelector('#onboarding-table tbody');
+                tbody.innerHTML = '';
+                PHARMAFLOW_DATA.vendor_onboarding.forEach(a => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-border hover:bg-app/10 transition-colors';
+                    row.innerHTML = `
+                        <td class="px-4 py-4">
+                            <div class="font-bold text-primary mb-1">${a.company_name}</div>
+                            <div class="text-[10px] text-secondary font-mono">${a.id}</div>
+                        </td>
+                        <td class="px-4 py-4 text-right">
+                            <div class="flex justify-end gap-1">
+                                <button class="btn btn-icon btn-success rounded-full" onclick="approveApplication('${a.id}')"><i data-lucide="check" class="w-3 h-3"></i></button>
+                                <button class="btn btn-icon btn-danger rounded-full" onclick="rejectApplication('${a.id}')"><i data-lucide="x" class="w-3 h-3"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                document.getElementById('count-pending').textContent = PHARMAFLOW_DATA.vendor_onboarding.length;
+                lucide.createIcons();
+            }
+
+            window.approveApplication = (id) => {
+                const app = PHARMAFLOW_DATA.vendor_onboarding.find(x => x.id === id);
+                if (!app) return;
+                PHARMAFLOW_DATA.vendor_onboarding = PHARMAFLOW_DATA.vendor_onboarding.filter(x => x.id !== id);
+                PHARMAFLOW_DATA.vendors.push({
+                    id: 'V' + Math.random().toString().slice(2, 5),
+                    name: app.company_name,
+                    type: 'Carrier',
+                    status: 'approved',
+                    joined_date: new Date().toISOString().split('T')[0]
+                });
+                savePharmaData();
+                renderVendors();
+                renderOnboarding();
+            };
+
+            window.rejectApplication = (id) => {
+                if (confirm('Are you sure you want to reject this application?')) {
+                    PHARMAFLOW_DATA.vendor_onboarding = PHARMAFLOW_DATA.vendor_onboarding.filter(x => x.id !== id);
+                    savePharmaData();
+                    renderOnboarding();
+                    // Optional toast or feedback
+                }
+            };
+
+            window.removeVendor = (id) => {
+                if (confirm('Permanently remove this partner from network?')) {
+                    PHARMAFLOW_DATA.vendors = PHARMAFLOW_DATA.vendors.filter(v => v.id !== id);
+                    savePharmaData();
+                    renderVendors();
+                }
+            };
+
+            window.showAddModal = () => document.getElementById('vendor-modal').classList.remove('hidden');
+            window.hideAddModal = () => document.getElementById('vendor-modal').classList.add('hidden');
+            window.addVendor = () => {
+                const name = document.getElementById('new-v-name').value;
+                if (!name) return;
+                PHARMAFLOW_DATA.vendors.push({
+                    id: 'V' + Math.random().toString().slice(2, 5),
+                    name: name,
+                    type: document.getElementById('new-v-type').value,
+                    status: 'approved',
+                    joined_date: new Date().toISOString().split('T')[0]
+                });
+                savePharmaData();
+                hideAddModal();
+                renderVendors();
+            };
+
+            renderVendors();
+            renderOnboarding();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

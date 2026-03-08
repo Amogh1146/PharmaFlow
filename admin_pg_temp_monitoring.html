@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Temperature Monitoring</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="admin_pg_dashboard.html" class="sidebar-item">
+                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+                </a>
+                <a href="admin_pg_route_planning.html" class="sidebar-item">
+                    <i data-lucide="map"></i> <span>Route Planning</span>
+                </a>
+                <a href="admin_pg_temp_monitoring.html" class="sidebar-item active">
+                    <i data-lucide="thermometer"></i> <span>Temp Monitor</span>
+                </a>
+                <a href="admin_pg_cost_risk.html" class="sidebar-item">
+                    <i data-lucide="trending-up"></i> <span>Cost & Risk</span>
+                </a>
+                <a href="admin_pg_vendor_mgmt.html" class="sidebar-item">
+                    <i data-lucide="truck"></i> <span>Vendor Mgmt</span>
+                </a>
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+                <div class="topbar-title">Real-Time Telemetry Feed</div>
+            </div>
+
+            <div class="flex-1 max-w-md px-6">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 text-secondary" style="width: 16px;"></i>
+                    <input type="text" class="form-input" placeholder="Search by Node ID, Region or Carrier..."
+                        style="padding-left: 40px; border-radius: 20px; background: rgba(0,0,0,0.03);">
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="topbar-badge"
+                    style="background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.2);">
+                    LIVE TELEMETRY</div>
+                <div class="flex items-center gap-4 topbar-user-area" style="position: relative;">
+                    <div class="relative cursor-pointer">
+                        <i data-lucide="bell" style="color: var(--text-secondary);"></i>
+                        <span class="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer" onclick="showUserMenu()">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=3B82F6&color=fff" alt="User"
+                            class="w-8 h-8 rounded-full" style="width: 32px; height: 32px; border-radius: 50%;">
+                        <span id="topbar-username" style="font-size: 14px; font-weight: 600;">Admin</span>
+                        <i data-lucide="chevron-down"></i>
+                    </div>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> Control
+                            Center</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="flex flex-col gap-6" style="min-height: calc(100vh - var(--topbar-height) - 48px);">
+                <div class="alert-banner warning flex-shrink-0">
+                    <i data-lucide="info"></i>
+                    <span>Control Center: Live simulation active across 5 global cold-chain nodes. Sync Pulse:
+                        3.0s</span>
+                </div>
+
+                <div class="flex flex-col gap-8">
+                    <!-- Main Table Area -->
+                    <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header flex items-center justify-between">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center gap-3">
+                                <span class="badge badge-info">Active Mesh</span>
+                                <span class="text-xs font-bold text-secondary uppercase tracking-widest">Global
+                                    Sensors</span>
+                            </div>
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-2 top-2 text-secondary"
+                                    style="width: 12px;"></i>
+                                <input type="text" class="form-input text-xs" style="width: 180px; padding-left: 28px;"
+                                    placeholder="Filter Node ID...">
+                            </div>
+                        </div>
+                        <div class="card-body p-0 flex-1">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <table class="w-full" id="temp-table">
+                                <thead class="sticky top-0 bg-surface z-10">
+                                    <tr>
+                                        <th
+                                            class="text-left px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Node ID</th>
+                                        <th
+                                            class="text-left px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Tenant</th>
+                                        <th
+                                            class="text-left px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Current</th>
+                                        <th
+                                            class="text-left px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Trend (24h)</th>
+                                        <th
+                                            class="text-left px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Setpoint</th>
+                                        <th
+                                            class="text-left px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Status</th>
+                                        <th
+                                            class="text-left px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Sync</th>
+                                        <th
+                                            class="text-right px-4 py-3 text-[10px] font-black uppercase text-secondary border-b border-border">
+                                            Detail</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Metrics -->
+                    <div class="flex flex-col gap-6">
+                        <div class="card bg-accent/5" style="border-left: 4px solid var(--accent);">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="card-header border-none pb-2">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-accent">Predictive
+                                    Forecasting</span>
+                            </div>
+                            <div class="card-body pt-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                                <div class="flex flex-col gap-4">
+                                    <div
+                                        class="flex justify-between items-center bg-surface/50 p-2 rounded-lg border border-border">
+                                        <div class="text-[9px] font-bold text-secondary uppercase leading-none">Thermal
+                                            Stability Index</div>
+                                        <div class="text-sm font-black text-success">98.2%</div>
+                                    </div>
+                                    <div
+                                        class="flex justify-between items-center bg-surface/50 p-2 rounded-lg border border-border">
+                                        <div class="text-[9px] font-bold text-secondary uppercase leading-none">
+                                            Projected Excursions (24h)</div>
+                                        <div class="text-sm font-black text-danger">~1.2 Avg</div>
+                                    </div>
+                                    <div class="alert-banner info py-2 px-3 mt-2">
+                                        <div class="text-[9px] leading-tight">AI Forecasting suggests high risk for
+                                            SEA-LANES due to port congestion delays.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kpi-card success">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center justify-between mb-2">
+                                <i data-lucide="check-circle" style="color: var(--success);"></i>
+                                <span class="badge badge-success">Nominal</span>
+                            </div>
+                            <div class="kpi-value" id="count-normal">4</div>
+                            <div class="kpi-label">Nodes in Range</div>
+                        </div>
+
+                        <div class="kpi-card danger">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex items-center justify-between mb-2">
+                                <i data-lucide="zap" style="color: var(--danger);"></i>
+                                <span class="badge badge-danger">Alert</span>
+                            </div>
+                            <div class="kpi-value" id="count-excursion">1</div>
+                            <div class="kpi-label">Thermal Excursions</div>
+                        </div>
+
+                        <div class="card shadow-lg">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="card-header border-b-border">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                                <span class="text-[10px] font-black uppercase tracking-widest text-primary">Global IoT
+                                    Gateway Vitals</span>
+                            </div>
+                            <div class="card-body flex flex-col gap-6">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="plane" class="text-accent w-4 h-4"></i>
+                                        <span class="text-[10px] font-bold text-secondary uppercase">Air-Comms
+                                            Gateway</span>
+                                    </div>
+                                    <span class="text-[10px] font-black text-success">OPERATIONAL</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="ship" class="text-accent w-4 h-4"></i>
+                                        <span class="text-[10px] font-bold text-secondary uppercase">Sea-Sat Link
+                                            Delta</span>
+                                        <span class="badge badge-warning text-[8px] h-4">LATENCY</span>
+                                    </div>
+                                    <span class="text-[10px] font-black text-warning">SLOW</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="truck" class="text-accent w-4 h-4"></i>
+                                        <span class="text-[10px] font-bold text-secondary uppercase">Road-Cell
+                                            Mesh</span>
+                                    </div>
+                                    <span class="text-[10px] font-black text-success">OPERATIONAL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/command-palette.js"></script>
+    <script>
+        const user = initAuth('SYSTEM');
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            lucide.createIcons();
+            populateTopbar();
+
+            const tableBody = document.querySelector('#temp-table tbody');
+            const historicalData = {};
+
+            function drawSparkline(id, val) {
+                if (!historicalData[id]) historicalData[id] = Array(20).fill(val);
+                historicalData[id].push(val);
+                if (historicalData[id].length > 20) historicalData[id].shift();
+
+                const canvas = document.getElementById(`spark-${id}`);
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, 100, 30);
+                ctx.beginPath();
+                ctx.strokeStyle = historicalData[id][historicalData[id].length - 1] > PHARMAFLOW_DATA.shipments.find(s => s.id === id).setpoint + 2 ? '#EF4444' : '#10B981';
+                ctx.lineWidth = 2;
+                historicalData[id].forEach((v, i) => {
+                    const x = i * 5;
+                    const y = 25 - (v - PHARMAFLOW_DATA.shipments.find(s => s.id === id).setpoint + 5) * 3;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            }
+
+            function renderTable() {
+                tableBody.innerHTML = '';
+                PHARMAFLOW_DATA.shipments.forEach(s => {
+                    const row = document.createElement('tr');
+                    row.id = `row-${s.id}`;
+
+                    const isDanger = Math.abs(s.current_temp - s.setpoint) > 2.0;
+                    if (isDanger) row.classList.add('row-danger');
+
+                    row.innerHTML = `
+                        <td class="px-4 py-4 text-xs font-black text-primary">${s.id}</td>
+                        <td class="px-4 py-4 text-xs text-secondary font-medium">${PHARMAFLOW_DATA.tenants.find(t => t.id === s.tenant_id).name}</td>
+                        <td class="px-4 py-4" id="temp-${s.id}">
+                            <div class="flex items-center gap-2">
+                                <span class="status-pulse ${isDanger ? 'danger' : ''}"></span>
+                                <span class="badge ${isDanger ? 'badge-danger' : 'badge-success'}">${s.current_temp}°C</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4"><canvas id="spark-${s.id}" width="100" height="30"></canvas></td>
+                        <td class="px-4 py-4 text-xs font-bold">${s.setpoint}°C</td>
+                        <td class="px-4 py-4" id="status-${s.id}">
+                            <span class="badge ${isDanger ? 'badge-danger' : 'badge-success'}">${isDanger ? 'ALERT' : 'NOMINAL'}</span>
+                        </td>
+                        <td class="px-4 py-4 text-[10px] text-secondary font-mono uppercase" id="sync-${s.id}">${new Date().toLocaleTimeString('en-US', { hour12: false })}</td>
+                        <td class="px-4 py-4 text-right">
+                             <a href="shared_pg_shipment_detail.html?id=${s.id}" class="btn btn-icon btn-secondary glass">Inspect</a>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                    drawSparkline(s.id, s.current_temp);
+                });
+            }
+
+            function updateStats() {
+                const excursions = PHARMAFLOW_DATA.shipments.filter(s => Math.abs(s.current_temp - s.setpoint) > 2.0).length;
+                document.getElementById('count-excursion').textContent = excursions;
+                document.getElementById('count-normal').textContent = PHARMAFLOW_DATA.shipments.length - excursions;
+            }
+
+            // Live Update
+            setInterval(() => {
+                // Randomly pick a shipment to update, but always keep SHP002 volatile
+                const randomIdx = Math.floor(Math.random() * PHARMAFLOW_DATA.shipments.length);
+                const s = PHARMAFLOW_DATA.shipments[randomIdx];
+
+                if (s.id === 'SHP002') {
+                    s.current_temp += (Math.random() * 0.4 - 0.1); // mostly goes up
+                } else {
+                    s.current_temp = s.setpoint + (Math.random() * 0.8 - 0.4);
+                }
+
+                s.current_temp = parseFloat(s.current_temp.toFixed(1));
+
+                const row = document.getElementById(`row-${s.id}`);
+                const tempCell = document.getElementById(`temp-${s.id}`);
+                const statusCell = document.getElementById(`status-${s.id}`);
+                const syncCell = document.getElementById(`sync-${s.id}`);
+
+                const isDanger = Math.abs(s.current_temp - s.setpoint) > 2.0;
+
+                if (isDanger) {
+                    row.classList.add('row-danger');
+                    tempCell.innerHTML = `<div class="flex items-center gap-2"><span class="status-pulse danger"></span><span class="badge badge-danger">${s.current_temp}°C</span></div>`;
+                    statusCell.innerHTML = `<span class="badge badge-danger">ALERT</span>`;
+                } else {
+                    row.classList.remove('row-danger');
+                    tempCell.innerHTML = `<div class="flex items-center gap-2"><span class="status-pulse"></span><span class="badge badge-success">${s.current_temp}°C</span></div>`;
+                    statusCell.innerHTML = `<span class="badge badge-success">NOMINAL</span>`;
+                }
+
+                syncCell.textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+                drawSparkline(s.id, s.current_temp);
+                updateStats();
+            }, 2000);
+
+            renderTable();
+            updateStats();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PharmaFlow | Login</title>
+  <link rel="stylesheet" href="css/global.css">
+  <style>
+    .login-layout {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #020617;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.2) 0px, transparent 50%),
+        radial-gradient(at 50% 0%, rgba(16, 185, 129, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.2) 0px, transparent 50%),
+        url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z" fill="%23ffffff" fill-opacity="0.02" fill-rule="evenodd"/%3E%3C/svg%3E');
+      padding: 20px;
+    }
+
+    .login-card {
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 48px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.1), 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .login-card::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      right: -1px;
+      bottom: -1px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+      border-radius: 24px;
+      z-index: -1;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-logo {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      margin-bottom: 8px;
+      color: white;
+    }
+
+    .login-logo span {
+      background: linear-gradient(90deg, #60A5FA, #3B82F6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-tagline {
+      color: #94A3B8;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .form-label {
+      color: #CBD5E1;
+    }
+
+    .form-input {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: #3B82F6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    }
+
+    .form-input::placeholder {
+      color: #64748B;
+    }
+
+    .demo-creds {
+      margin-top: 32px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      font-size: 13px;
+      color: #94A3B8;
+    }
+
+    .demo-creds code {
+      background: rgba(255, 255, 255, 0.05);
+      color: #60A5FA;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+  <link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body class="login-layout overflow-hidden">
+  <!-- Particle Background -->
+  <div class="absolute inset-0 z-0 opacity-40">
+    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(59, 130, 246, 0.1)" stroke-width="1" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grid)" />
+      <g>
+        <circle cx="10%" cy="20%" r="2" fill="var(--accent)">
+          <animate attributeName="opacity" values="0;1;0" dur="4s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="20%;25%;20%" dur="8s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="85%" cy="15%" r="3" fill="var(--success)">
+          <animate attributeName="opacity" values="0;1;0" dur="5s" repeatCount="indefinite" />
+          <animate attributeName="cy" values="15%;10%;15%" dur="10s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="70%" cy="80%" r="2" fill="var(--danger)">
+          <animate attributeName="opacity" values="0;1;0" dur="6s" repeatCount="indefinite" />
+          <animate attributeName="cx" values="70%;75%;70%" dur="12s" repeatCount="indefinite" />
+        </circle>
+        <path d="M 0 50 Q 250 100 500 50 T 1000 50" fill="none" stroke="var(--accent)" stroke-width="0.5" opacity="0.1">
+          <animate attributeName="d"
+            values="M 0 50 Q 250 100 500 50 T 1000 50; M 0 50 Q 250 0 500 50 T 1000 50; M 0 50 Q 250 100 500 50 T 1000 50"
+            dur="20s" repeatCount="indefinite" />
+        </path>
+      </g>
+    </svg>
+  </div>
+  <div class="login-card">
+    <div class="glowing-container glow-container">
+      <div class="glow-ring"></div>
+      <div class="glow-effect"></div>
+    </div>
+    <div class="login-header">
+      <div class="login-logo">Pharma<span>Flow</span></div>
+      <div class="login-tagline">The Intelligent Backbone for Cold-Chain Logistics</div>
+    </div>
+
+    <div id="error-banner" class="alert-banner danger hidden" style="margin-bottom: 24px; border-radius: 12px;">
+      Authentication Failed. Please check your credentials.
+    </div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label">Network Identity (Email)</label>
+        <input type="email" id="email" class="form-input" placeholder="admin@pharmaflow.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Access Token (Password)</label>
+        <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+      </div>
+      <button type="submit" class="btn btn-primary"
+        style="width: 100%; justify-content: center; padding: 16px; margin-top: 20px; font-weight: 700; font-size: 15px; box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;"
+        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 0 30px rgba(59, 130, 246, 0.6)';"
+        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 0 20px rgba(59, 130, 246, 0.4)';">
+        Initiate Handshake Sequence
+      </button>
+      <div style="text-align: center; margin-top: 28px; display: flex; flex-direction: column; gap: 14px;">
+        <a href="shared_pg_vendor_onboarding.html"
+          class="text-xs text-accent font-bold hover:text-white transition-colors" style="text-decoration: none;">Create
+          Supplier Profile →</a>
+        <a href="#" onclick="resetData()" class="text-[10px] text-secondary hover:text-white transition-colors"
+          style="text-decoration: none; opacity: 0.8; font-family: monospace;">[ DEBUG: PURGE CACHE ]</a>
+      </div>
+    </form>
+
+    <div class="demo-creds">
+      <div class="font-bold text-white mb-2" style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">
+        Ecosystem Access Gateways:</div>
+      <p>Node Master: <code>admin@pharmaflow.com</code> / <code>admin123</code></p>
+      <p style="margin-top: 8px;">Cipla Tenant: <code>client@cipla.com</code> / <code>client123</code></p>
+    </div>
+  </div>
+
+  <script src="js/mockdata.js"></script>
+  <script>
+    const form = document.getElementById('login-form');
+    const errorBanner = document.getElementById('error-banner');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const pwd = document.getElementById('password').value;
+
+      const user = PHARMAFLOW_DATA.users.find(u => u.email === email && u.password === pwd);
+
+      if (user) {
+        // Mock login success
+        localStorage.setItem('pharmaflow_user', JSON.stringify(user));
+
+        if (user.role === 'SYSTEM') {
+          window.location.href = 'admin_pg_dashboard.html';
+        } else {
+          window.location.href = 'client_pg_overview.html';
+        }
+      } else {
+        errorBanner.classList.remove('hidden');
+      }
+    });
+
+    function resetData() {
+      if (confirm('This will restore all demo data to default. Proceed?')) {
+        resetPharmaData();
+      }
+    }
+
+    // Clear local storage on load to ensure stale logins don't persist during demo
+    // localStorage.removeItem('pharmaflow_user'); 
+  </script>
+  <script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

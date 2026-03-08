@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Cost & Risk Analysis</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="admin_pg_dashboard.html" class="sidebar-item">
+                    <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+                </a>
+                <a href="admin_pg_route_planning.html" class="sidebar-item">
+                    <i data-lucide="map"></i> <span>Route Planning</span>
+                </a>
+                <a href="admin_pg_temp_monitoring.html" class="sidebar-item">
+                    <i data-lucide="thermometer"></i> <span>Temp Monitor</span>
+                </a>
+                <a href="admin_pg_cost_risk.html" class="sidebar-item active">
+                    <i data-lucide="trending-up"></i> <span>Cost & Risk</span>
+                </a>
+                <a href="admin_pg_vendor_mgmt.html" class="sidebar-item">
+                    <i data-lucide="truck"></i> <span>Vendor Mgmt</span>
+                </a>
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+                <div class="topbar-title">Financial Risk & Strategy Simulator</div>
+            </div>
+
+            <div class="flex-1 max-w-md px-6">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-3 top-2.5 text-secondary" style="width: 16px;"></i>
+                    <input type="text" class="form-input" placeholder="Search cost models or historical lanes..."
+                        style="padding-left: 40px; border-radius: 20px; background: rgba(0,0,0,0.03);">
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="topbar-badge"
+                    style="background: rgba(59, 130, 246, 0.1); color: var(--accent); border-color: rgba(59, 130, 246, 0.2);">
+                    STRATEGY ENGINE</div>
+                <div class="flex items-center gap-4 topbar-user-area" style="position: relative;">
+                    <div class="relative cursor-pointer">
+                        <i data-lucide="bell" style="color: var(--text-secondary);"></i>
+                        <span class="absolute -top-1 -right-1 bg-danger w-2 h-2 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center gap-2 cursor-pointer" onclick="showUserMenu()">
+                        <img src="https://ui-avatars.com/api/?name=Admin+User&background=3B82F6&color=fff" alt="User"
+                            class="w-8 h-8 rounded-full" style="width: 32px; height: 32px; border-radius: 50%;">
+                        <span id="topbar-username" style="font-size: 14px; font-weight: 600;">Admin</span>
+                        <i data-lucide="chevron-down"></i>
+                    </div>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> Control
+                            Center</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Section 1: Strategic Parameter Tuning -->
+            <div class="card" style="border-top: 4px solid var(--accent);">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="sliders" class="text-accent"></i>
+                        <span class="text-xs font-black uppercase tracking-widest">Target Parameter Tuning</span>
+                    </div>
+                </div>
+                <div class="card-body" style="padding: 40px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        <div class="flex flex-col gap-8">
+                            <div class="form-group">
+                                <label class="form-label font-bold text-xs uppercase text-secondary">Analyze
+                                    Asset</label>
+                                <select class="form-select" id="shipment-selector"
+                                    style="height: 50px; font-size: 16px;"></select>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="form-label font-bold text-xs uppercase text-secondary">Risk
+                                        Tolerance</label>
+                                    <span class="text-xl font-black text-accent" id="risk-val">20%</span>
+                                </div>
+                                <input type="range"
+                                    class="w-full h-2 bg-app rounded-lg appearance-none cursor-pointer accent-accent"
+                                    id="risk-slider" min="0" max="100" value="20">
+                                <div class="flex justify-between text-[10px] text-secondary mt-2">
+                                    <span>CONSERVATIVE</span>
+                                    <span>AGGRESSIVE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-8">
+                            <div class="form-group">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="form-label font-bold text-xs uppercase text-secondary">Speed
+                                        Priority</label>
+                                    <span class="text-xl font-black text-success" id="speed-val">40%</span>
+                                </div>
+                                <input type="range"
+                                    class="w-full h-2 bg-app rounded-lg appearance-none cursor-pointer accent-success"
+                                    id="speed-slider" min="0" max="100" value="40">
+                            </div>
+
+                            <div class="form-group">
+                                <div class="flex justify-between items-center mb-4">
+                                    <label class="form-label font-bold text-xs uppercase text-secondary">Budget
+                                        Efficiency</label>
+                                    <span class="text-xl font-black text-warning" id="budget-val">70%</span>
+                                </div>
+                                <input type="range"
+                                    class="w-full h-2 bg-app rounded-lg appearance-none cursor-pointer accent-warning"
+                                    id="budget-slider" min="0" max="100" value="70">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 flex items-center justify-between gap-6 border-t border-border pt-8">
+                        <div
+                            class="flex-1 p-6 rounded-2xl bg-success/5 border border-success/20 flex items-center gap-4">
+                            <div class="p-4 rounded-full bg-success text-white shadow-lg shadow-success/20">
+                                <i data-lucide="trending-down"></i>
+                            </div>
+                            <div>
+                                <div class="text-[10px] text-secondary font-black uppercase tracking-widest">Projected
+                                    Annual Savings</div>
+                                <div class="text-3xl font-black text-success" id="savings-display">
+                                    ${formatCurrency(1240)} / yr</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary h-[70px] px-16 text-xl shadow-xl shadow-accent/20"
+                            id="optimize-btn">
+                            <i data-lucide="wand-2"></i> Run Strategy Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1.5: Analytical Data Visualization -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="pie-chart" class="text-accent"></i>
+                            <span class="text-xs font-black uppercase tracking-widest text-secondary">Cost Allocation
+                                Breakdown</span>
+                        </div>
+                    </div>
+                    <div class="card-body flex justify-center items-center" style="min-height: 450px; padding: 40px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <canvas id="cost-pie-chart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="shield-alert" class="text-danger"></i>
+                            <span class="text-xs font-black uppercase tracking-widest text-secondary">Strategic Risk
+                                Composition</span>
+                        </div>
+                    </div>
+                    <div class="card-body flex justify-center items-center" style="min-height: 450px; padding: 40px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <canvas id="risk-pie-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Response Alerts -->
+            <div id="success-banner" class="alert-banner success hidden">
+                <i data-lucide="check-circle" style="width: 24px; height: 24px;"></i>
+                <span id="banner-text" class="text-lg font-bold">Strategy confirmed.</span>
+            </div>
+
+            <!-- Section 3: Recommendation List -->
+            <div class="flex flex-col gap-6">
+                <div class="flex items-center justify-between px-2">
+                    <h3 class="text-xs font-black uppercase tracking-widest text-secondary">Optimized Strategic Pathways
+                    </h3>
+                    <div class="flex gap-3">
+                        <button class="btn btn-secondary btn-sm"><i data-lucide="download"></i> Export Modeling</button>
+                        <button class="btn btn-secondary btn-sm"><i data-lucide="share-2"></i></button>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-10" id="comparison-cards">
+                    <!-- Dynamic vertical stack -->
+                </div>
+            </div>
+
+            <!-- Section 4: Deep-Data Comparison -->
+            <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="card-header flex items-center justify-between">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="layout-list" class="text-accent"></i>
+                        <span class="text-xs font-black uppercase tracking-widest text-secondary">Holistic Performance
+                            Comparison</span>
+                    </div>
+                    <span class="badge badge-gray" id="currency-display-badge">CURRENCY: USD</span>
+                </div>
+                <div class="card-body p-0">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <table class="w-full table-matrix">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="text-left px-8 py-6 bg-app/30 border-b border-border text-[10px] font-black uppercase text-secondary">
+                                    Strategic Factor</th>
+                                <th
+                                    class="text-center px-8 py-6 bg-app/30 border-b border-border text-[10px] font-black uppercase text-blue-500">
+                                    Tier A: Balanced</th>
+                                <th
+                                    class="text-center px-8 py-6 bg-app/30 border-b border-border text-[10px] font-black uppercase text-emerald-500">
+                                    Tier B: Lean</th>
+                                <th
+                                    class="text-center px-8 py-6 bg-app/30 border-b border-border text-[10px] font-black uppercase text-rose-500">
+                                    Tier C: Velocity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-body">
+                            <!-- Rows populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/command-palette.js"></script>
+    <script>
+        const user = initAuth('SYSTEM');
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            lucide.createIcons();
+            populateTopbar();
+
+            // Currency Badge
+            document.getElementById('currency-display-badge').textContent = `CURRENCY: ${getCurrency()}`;
+
+            const selector = document.getElementById('shipment-selector');
+            const comparisonCards = document.getElementById('comparison-cards');
+            const successBanner = document.getElementById('success-banner');
+            const bannerText = document.getElementById('banner-text');
+
+            const sliders = {
+                risk: document.getElementById('risk-slider'),
+                speed: document.getElementById('speed-slider'),
+                budget: document.getElementById('budget-slider')
+            };
+
+            const views = {
+                risk: document.getElementById('risk-val'),
+                speed: document.getElementById('speed-val'),
+                budget: document.getElementById('budget-val')
+            };
+
+            let costChart, riskChart;
+
+            function initCharts() {
+                const ctxCost = document.getElementById('cost-pie-chart').getContext('2d');
+                const ctxRisk = document.getElementById('risk-pie-chart').getContext('2d');
+
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim(),
+                                font: { family: 'Inter', size: 12, weight: '600' },
+                                padding: 20
+                            }
+                        }
+                    }
+                };
+
+                costChart = new Chart(ctxCost, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Logistics', 'Risk Buffer', 'Fuel', 'Handling'],
+                        datasets: [{
+                            data: [0, 0, 0, 0],
+                            backgroundColor: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444'],
+                            borderWidth: 0,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: chartOptions
+                });
+
+                riskChart = new Chart(ctxRisk, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Thermal Deviation', 'Logistics Delay', 'Compliance', 'Security'],
+                        datasets: [{
+                            data: [0, 0, 0, 0],
+                            backgroundColor: ['#F87171', '#FBBF24', '#60A5FA', '#34D399'],
+                            borderWidth: 0,
+                            hoverOffset: 15
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+
+            PHARMAFLOW_DATA.shipments.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.textContent = `${s.id} | ${s.product.substring(0, 15)}...`;
+                selector.appendChild(opt);
+            });
+
+            function updateMetrics() {
+                views.risk.textContent = sliders.risk.value + '%';
+                views.speed.textContent = sliders.speed.value + '%';
+                views.budget.textContent = sliders.budget.value + '%';
+
+                // Update Savings Display
+                const baseSavings = 1240;
+                const modSavings = baseSavings * (1 + (sliders.speed.value * 0.01) - (sliders.budget.value * 0.01));
+                document.getElementById('savings-display').textContent = `${formatCurrency(modSavings)} / yr`;
+
+                renderSimulation();
+            }
+
+            function renderSimulation() {
+                comparisonCards.innerHTML = '';
+                const recs = PHARMAFLOW_DATA.route_recommendations.default;
+
+                // Simulated logic based on sliders
+                const riskMod = sliders.risk.value / 100;
+                const speedMod = sliders.speed.value / 100;
+                const budgetMod = sliders.budget.value / 100;
+
+                recs.forEach((r, idx) => {
+                    // Inject jitter into data for demo feel
+                    const cost = Math.round(r.cost * (1 + (speedMod * 0.2) - (budgetMod * 0.3)));
+                    const risk = Math.min(100, Math.max(5, Math.round(r.risk_score * (1 + (riskMod * 0.5) - (budgetMod * 0.1)))));
+
+                    const card = document.createElement('div');
+                    card.className = `card relative overflow-hidden ${idx === 0 ? 'border-accent shadow-xl' : 'opacity-80'}`;
+                    if (idx === 0) {
+                        card.innerHTML += `<div class="absolute top-0 right-0 bg-accent text-white text-[8px] font-black px-3 py-1 uppercase rounded-bl-lg">Optimal</div>`;
+                    }
+
+                    card.innerHTML += `
+                        <div class="card-header flex items-center justify-between border-b-border" style="padding: 24px 32px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                           <div class="flex items-center gap-4">
+                               <div class="p-2 rounded-lg bg-accent/10 text-accent">
+                                    <i data-lucide="${r.mode.includes('Air') ? 'plane' : 'ship'}" style="width: 20px; height: 20px;"></i>
+                               </div>
+                               <span class="text-sm font-black uppercase tracking-widest ${idx === 0 ? 'text-accent' : 'text-secondary'}">${r.type} Strategy</span>
+                           </div>
+                           <span class="badge ${idx === 0 ? 'badge-success' : 'badge-gray'}">${r.mode} Gateway</span>
+                        </div>
+                        <div class="card-body" style="padding: 40px;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                                <div>
+                                    <div class="text-[10px] text-secondary font-black uppercase mb-1">Estimated Direct Cost</div>
+                                    <div class="text-5xl font-black mb-6">${formatCurrency(cost)}</div>
+                                    
+                                    <div class="flex flex-col gap-6">
+                                        <div>
+                                            <div class="flex justify-between text-[11px] font-bold mb-2 uppercase text-secondary">
+                                                <span>Aggregate Risk Exposure</span>
+                                                <span class="${risk > 60 ? 'text-danger' : 'text-primary'}">${risk}%</span>
+                                            </div>
+                                            <div class="risk-bar-wrap" style="height: 8px;">
+                                                <div class="risk-bar ${risk < 30 ? 'risk-low' : risk < 60 ? 'risk-medium' : 'risk-high'}" style="width: ${risk}%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between p-4 bg-app rounded-xl border border-border">
+                                            <div class="text-xs font-bold text-secondary uppercase">Projected Lead Time</div>
+                                            <div class="text-xl font-black text-primary">${r.eta_hours} Hours Transit</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-col gap-6">
+                                    <div class="p-6 rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center text-center">
+                                        <div class="text-[10px] text-secondary font-black uppercase mb-4">Strategic Viability Score</div>
+                                        <div class="text-4xl font-black text-accent">${100 - risk}%</div>
+                                        <div class="text-xs text-secondary mt-2">Calculated based on real-time node humidity, temperature stability, and vendor SLA history.</div>
+                                    </div>
+                                    <button class="btn ${idx === 0 ? 'btn-primary' : 'btn-secondary'} h-[60px] text-lg w-full justify-center" onclick="confirmStrategy('${r.type}', ${cost})">
+                                        ${idx === 0 ? 'Lock This Strategy' : 'Select Alternative'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    comparisonCards.appendChild(card);
+                });
+
+                renderMatrix(riskMod, speedMod, budgetMod);
+                updateCharts(riskMod, speedMod, budgetMod);
+                lucide.createIcons();
+            }
+
+            function updateCharts(riskMod, speedMod, budgetMod) {
+                // Cost Chart Update
+                const costBase = [4250, 1200, 450, 600];
+                const updatedCosts = costBase.map(val => Math.round(val * (1 + (speedMod * 0.1) - (budgetMod * 0.2))));
+                costChart.data.datasets[0].data = updatedCosts;
+                costChart.update();
+
+                // Risk Chart Update
+                const riskBase = [30, 25, 15, 10];
+                const updatedRisks = riskBase.map(val => Math.round(val * (1 + (riskMod * 0.4) - (budgetMod * 0.1))));
+                riskChart.data.datasets[0].data = updatedRisks;
+                riskChart.update();
+            }
+
+            function renderMatrix(rMod, sMod, bMod) {
+                const matrixBody = document.getElementById('matrix-body');
+                const factors = [
+                    { name: 'Direct Logistics Cost', base: [4250, 2800, 7100] },
+                    { name: 'Risk Mitigation Buffer', base: [1200, 2500, 800] },
+                    { name: 'Fuel & Carbon Offset', base: [450, 300, 900] },
+                    { name: 'Personnel & Handling', base: [600, 450, 1200] }
+                ];
+
+                matrixBody.innerHTML = '';
+                factors.forEach(f => {
+                    const row = document.createElement('tr');
+                    row.className = 'border-b border-border hover:bg-app/20 transition-colors';
+                    row.innerHTML = `<td class="px-6 py-4 text-xs font-bold text-primary">${f.name}</td>`;
+
+                    f.base.forEach((val, i) => {
+                        const modified = Math.round(val * (1 + (sMod * 0.1) - (bMod * 0.2)));
+                        row.innerHTML += `<td class="text-center px-6 py-4 text-xs font-medium text-secondary">${formatCurrency(modified)}</td>`;
+                    });
+                    matrixBody.appendChild(row);
+                });
+            }
+
+            window.confirmStrategy = (type, cost) => {
+                successBanner.classList.remove('hidden');
+                bannerText.textContent = `Financial Strategy [${type}] locked at ${formatCurrency(cost)} for ${selector.value}. Allocation processing...`;
+                lucide.createIcons();
+                setTimeout(() => successBanner.classList.add('hidden'), 4000);
+            };
+
+            Object.values(sliders).forEach(s => s.addEventListener('input', updateMetrics));
+            document.getElementById('optimize-btn').addEventListener('click', () => {
+                const btn = document.getElementById('optimize-btn');
+                btn.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i> Optimizing...';
+                lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = '<i data-lucide="wand-2"></i> Re-Calculate Strategy';
+                    lucide.createIcons();
+                    renderSimulation();
+                }, 1000);
+            });
+
+            selector.addEventListener('change', renderSimulation);
+            initCharts();
+            updateMetrics();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Compliance Document Library</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="client_pg_overview.html" class="sidebar-item">
+                    <i data-lucide="home"></i> <span>Overview</span>
+                </a>
+                <a href="client_pg_new_order.html" class="sidebar-item">
+                    <i data-lucide="plus-circle"></i> <span>New Order</span>
+                </a>
+                <a href="client_pg_temp_monitor.html" class="sidebar-item">
+                    <i data-lucide="activity"></i> <span>Monitoring</span>
+                </a>
+                <a href="client_pg_compliance_docs.html" class="sidebar-item active">
+                    <i data-lucide="file-text"></i> <span>Compliance</span>
+                </a>
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+                <div class="topbar-title">Quality Assurance & GDP Dossiers</div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-badge" id="topbar-tenant">LOADING...</div>
+                <div class="flex items-center gap-2 topbar-user-area" style="position: relative;">
+                    <span id="topbar-username" style="font-size: 14px; font-weight: 600;">Client</span>
+                    <i data-lucide="chevron-down" style="cursor: pointer;" onclick="showUserMenu()"></i>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> Profile &
+                            Settings</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="card mb-6">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="card-body flex justify-between items-center">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex gap-4 items-center">
+                        <label class="text-sm font-bold">Search Vault:</label>
+                        <input type="text" class="form-input" id="doc-search" placeholder="Shipment ID or Material..."
+                            style="width: 300px;">
+                    </div>
+                    <button class="btn btn-primary" onclick="showToast('Preparing batch compliance bundle...')">
+                        <i data-lucide="archive"></i> Download All as ZIP
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+                <div class="flex flex-col gap-6">
+                    <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>Active Shipment Dossiers</div>
+                        <div class="card-body" style="padding: 0;">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="table-wrap">
+                                <table id="docs-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Shipment</th>
+                                            <th>Delivery</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>GDP Compliance Audit Trail</div>
+                        <div class="card-body">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div class="flex flex-col gap-4" id="audit-trail">
+                                <div class="flex gap-4 p-3 border-b">
+                                    <div class="text-xs text-secondary w-20">10:45 AM</div>
+                                    <div class="text-sm"><strong>[System]</strong> Temporary Log SHP001 verified for GDP
+                                        compliance.</div>
+                                </div>
+                                <div class="flex gap-4 p-3 border-b">
+                                    <div class="text-xs text-secondary w-20">09:12 AM</div>
+                                    <div class="text-sm"><strong>[Arjun Mehta]</strong> Quality Release for SHP002
+                                        signed electronically.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div class="card relative overflow-hidden">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <!-- AI Scan Scanline -->
+                        <div class="absolute inset-0 z-0 pointer-events-none opacity-20"
+                            style="background: linear-gradient(to bottom, transparent, var(--accent), transparent); height: 20px; animation: scanline 3s linear infinite;">
+                        </div>
+                        <style>
+                            @keyframes scanline {
+                                0% {
+                                    top: -20px;
+                                }
+
+                                100% {
+                                    top: 100%;
+                                }
+                            }
+                        </style>
+
+                        <div class="card-header flex justify-between items-center relative z-10">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <span>Pre-Shipment Checklist</span>
+                            <span class="badge badge-info text-[9px]"><i data-lucide="cpu"
+                                    style="width: 10px; height: 10px; display: inline; margin-right: 4px;"></i>AI
+                                Verified</span>
+                        </div>
+                        <div class="card-body relative z-10">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                            <div id="checklist-items" class="flex flex-col gap-3">
+                                <!-- populated -->
+                            </div>
+                            <button class="btn btn-primary mt-6" style="width: 100%; justify-content: center;"
+                                onclick="showToast('Compliance bundle signed!')">Sign & Release</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="toast" class="hidden"
+                style="position: fixed; bottom: 24px; right: 24px; background: var(--primary); color: white; padding: 12px 24px; border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 1000;">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="loader-2" class="animate-spin"></i>
+                    <span id="toast-msg">Processing...</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/command-palette.js"></script>
+    <script>
+        const user = initAuth('CLIENT');
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            lucide.createIcons();
+            populateTopbar();
+
+            const tableBody = document.querySelector('#docs-table tbody');
+            const checklistContainer = document.getElementById('checklist-items');
+
+            function renderTable() {
+                tableBody.innerHTML = '';
+                const data = PHARMAFLOW_DATA.compliance_docs.filter(d => {
+                    const s = PHARMAFLOW_DATA.shipments.find(ship => ship.id === d.shipment_id);
+                    return s && s.tenant_id === user.tenant_id;
+                });
+
+                data.forEach(d => {
+                    const row = document.createElement('tr');
+                    const badgeClass = d.status === 'complete' ? 'badge-success' : 'badge-warning';
+                    row.innerHTML = `
+                        <td><span class="font-bold">${d.shipment_id}</span></td>
+                        <td><span class="text-sm text-secondary">${d.delivery_date}</span></td>
+                        <td><span class="badge ${badgeClass}">${d.status.toUpperCase()}</span></td>
+                        <td>
+                          <button class="btn btn-sm btn-secondary" onclick="showToast('Downloading dossier for ${d.shipment_id}...')">
+                            <i data-lucide="download"></i>
+                          </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            function renderAuditTrail() {
+                const trail = document.getElementById('audit-trail');
+                trail.innerHTML = '';
+                PHARMAFLOW_DATA.global_audit_trail.forEach(log => {
+                    const div = document.createElement('div');
+                    div.className = 'flex gap-4 p-3 border-b border-border items-start animate-slideInRight';
+                    div.innerHTML = `
+                        <div class="text-[10px] text-secondary font-mono w-24 pt-1">${log.timestamp.split(' ')[1]}</div>
+                        <div class="flex-1">
+                            <div class="text-xs"><strong>[${log.user}]</strong> ${log.action}: <span class="text-primary font-bold">${log.target}</span></div>
+                            <div class="text-[10px] text-secondary mt-1">${log.details}</div>
+                        </div>
+                    `;
+                    trail.appendChild(div);
+                });
+            }
+
+            function renderChecklist() {
+                checklistContainer.innerHTML = '';
+                PHARMAFLOW_DATA.compliance_checklists.default.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-3 p-3 mb-2 rounded border border-border bg-surface/30 opacity-0 transition-opacity duration-500 hover:bg-surface';
+                    div.style.animation = `fadeIn 0.5s ease forwards ${index * 0.15}s`;
+
+                    const isChecked = item.status === 'completed' ? 'checked' : '';
+                    const iconColor = item.status === 'completed' ? 'var(--success)' : 'var(--text-secondary)';
+
+                    div.innerHTML = `
+                       <div class="flex items-center justify-center w-6 h-6 rounded-full ${item.status === 'completed' ? 'bg-success/20' : 'bg-surface'} border border-border font-bold">
+                           <i data-lucide="${item.status === 'completed' ? 'check' : 'circle'}" style="color: ${iconColor}; width: 14px; height: 14px;"></i>
+                       </div>
+                       <div class="flex-1">
+                           <span class="text-sm font-semibold line-clamp-1">${item.task}</span>
+                           <span class="text-[10px] text-secondary font-mono">${item.status === 'completed' ? 'Auto-Validated via Blockchain Tracker' : 'Pending Manual Review'}</span>
+                       </div>
+                       <input type="checkbox" class="hidden" ${isChecked}>
+                    `;
+                    checklistContainer.appendChild(div);
+                });
+                lucide.createIcons();
+            }
+
+            window.showToast = (msg) => {
+                const toast = document.getElementById('toast');
+                const toastMsg = document.getElementById('toast-msg');
+                toastMsg.textContent = msg;
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 3500);
+            };
+
+            renderTable();
+            renderChecklist();
+            renderAuditTrail();
+            lucide.createIcons();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>

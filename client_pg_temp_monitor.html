@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaFlow | Live Monitoring</title>
+    <link rel="stylesheet" href="css/global.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+        }
+
+        .status-panel {
+            background: #1A202C;
+            color: white;
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .temp-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .temp-value {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .temp-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .setpoint-control {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-top: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .chart-box {
+            height: 400px;
+            position: relative;
+        }
+    </style>
+<link rel="stylesheet" href="css/glowing-effect.css">
+</head>
+
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a href="#" class="sidebar-logo-link" id="logo-home-link">
+                <div class="sidebar-logo">
+                    <i data-lucide="droplet" style="color: #60A5FA;"></i>
+                    <span class="logo-text">Pharma<span>Flow</span></span>
+                </div>
+            </a>
+            <nav class="sidebar-nav">
+                <a href="client_pg_overview.html" class="sidebar-item">
+                    <i data-lucide="home"></i> <span>Overview</span>
+                </a>
+                <a href="client_pg_new_order.html" class="sidebar-item">
+                    <i data-lucide="plus-circle"></i> <span>New Order</span>
+                </a>
+                <a href="client_pg_temp_monitor.html" class="sidebar-item active">
+                    <i data-lucide="activity"></i> <span>Monitoring</span>
+                </a>
+                <a href="client_pg_compliance_docs.html" class="sidebar-item">
+                    <i data-lucide="file-text"></i> <span>Compliance</span>
+                </a>
+            </nav>
+            <div class="sidebar-logout" onclick="logout()">
+                <i data-lucide="log-out"></i> Logout
+            </div>
+        </aside>
+
+        <header class="topbar">
+            <div class="flex items-center gap-4">
+                <button class="btn btn-sm btn-secondary" onclick="toggleSidebar()"><i data-lucide="menu"></i></button>
+                <div class="topbar-title">Telemetry & Environmental Controls</div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-badge" id="topbar-tenant">LOADING...</div>
+                <div class="flex items-center gap-2 topbar-user-area" style="position: relative;">
+                    <span id="topbar-username" style="font-size: 14px; font-weight: 600;">Client</span>
+                    <i data-lucide="chevron-down" style="cursor: pointer;" onclick="showUserMenu()"></i>
+                    <div id="user-dropdown" class="dropdown-menu hidden">
+                        <a href="#" class="dropdown-item" onclick="toggleTheme()"><i data-lucide="moon"
+                                id="theme-icon"></i> Appearance</a>
+                        <a href="shared_pg_settings.html" class="dropdown-item"><i data-lucide="settings"></i> Profile &
+                            Settings</a>
+                        <a href="#" class="dropdown-item" onclick="logout()"><i data-lucide="log-out"></i> Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div id="excursion-alert" class="alert-ticker hidden">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="alert-circle"></i>
+                    <span><strong>CRITICAL:</strong> Current temperature (<strong><span
+                                id="alert-temp">--</span></strong>) is outside required band (<strong><span
+                                id="alert-band">--</span></strong>).</span>
+                </div>
+            </div>
+
+            <div class="card mb-6">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                <div class="card-body flex items-center justify-between">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="flex items-center gap-4">
+                        <label class="text-sm font-bold">Monitor Shipment:</label>
+                        <select class="form-select" style="width: 300px;" id="ship-select">
+                            <!-- populated -->
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="downloadCSV()">
+                        <i data-lucide="download"></i> Export Historical Logs
+                    </button>
+                </div>
+            </div>
+
+            <div class="monitor-grid">
+                <div class="card">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                    <div class="card-header">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>Environmental Profile (Last 15 minutes)</div>
+                    <div class="card-body">
+<div class="glowing-container glow-container"><div class="glow-ring"></div><div class="glow-effect"></div></div>
+                        <div class="chart-box">
+                            <canvas id="monitorChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="status-panel">
+                    <h3 class="text-sm font-bold mb-4">Device Status</h3>
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="badge badge-info" id="status-tag">ACTIVE</span>
+                        <span style="font-size: 11px; opacity: 0.6;">Updated Just Now</span>
+                    </div>
+
+                    <div class="temp-display">
+                        <div class="temp-value" id="big-temp">--°C</div>
+                        <div class="temp-meta">Targeting <span id="big-setpoint">--</span>°C</div>
+                    </div>
+
+                    <div class="setpoint-control">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs font-bold">Climate Control</span>
+                            <i data-lucide="lock" style="width: 14px; height: 14px; opacity: 0.5;" id="lock-icon"></i>
+                        </div>
+                        <label class="form-label" style="color: white; opacity: 0.8;">Adjust Setpoint</label>
+                        <input type="range" class="form-input" id="setpoint-slider"
+                            style="padding: 0; height: 12px; margin-bottom: 8px;">
+                        <div class="flex justify-between text-xs opacity-60">
+                            <span id="slider-min">--</span>
+                            <span id="slider-max">--</span>
+                        </div>
+                        <p class="text-[10px] mt-4 opacity-50 font-italic" id="lock-msg">Setpoint modifications are
+                            restricted while shipment is in custody of carrier.</p>
+                    </div>
+
+                    <div class="mt-8">
+                        <h4 class="text-xs font-bold mb-3 opacity-60">Sensor Metadata</h4>
+                        <div class="flex justify-between text-xs py-2 border-b border-white/10">
+                            <span>Device ID</span>
+                            <span class="font-medium">IOT-X992</span>
+                        </div>
+                        <div class="flex justify-between text-xs py-2 border-b border-white/10">
+                            <span>Battery</span>
+                            <span class="font-medium text-success">92%</span>
+                        </div>
+                        <div class="flex justify-between text-xs py-2">
+                            <span>Signal</span>
+                            <span class="font-medium">4G LTE (Strong)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/mockdata.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const user = initAuth('CLIENT');
+        if (user) {
+            initSidebarState();
+            document.getElementById('logo-home-link').href = getHomeLink(user);
+            lucide.createIcons();
+            populateTopbar();
+
+            const shipSelect = document.getElementById('ship-select');
+            const myShipments = PHARMAFLOW_DATA.shipments.filter(s => s.tenant_id === user.tenant_id);
+
+            myShipments.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.id;
+                opt.textContent = `${s.id} - ${s.product}`;
+                shipSelect.appendChild(opt);
+            });
+
+            let currentShipId = myShipments[0]?.id;
+            let chart;
+
+            function initChart() {
+                const ctx = document.getElementById('monitorChart').getContext('2d');
+                const s = PHARMAFLOW_DATA.shipments.find(x => x.id === currentShipId);
+                const data = [...PHARMAFLOW_DATA.temperature_logs[currentShipId]];
+
+                const labels = data.map((_, i) => `${i}m ago`).reverse();
+
+                if (chart) chart.destroy();
+
+                chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Temp',
+                            data: data,
+                            borderColor: '#0066CC',
+                            backgroundColor: 'rgba(0, 102, 204, 0.1)',
+                            fill: true,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#0066CC'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: '#E2E8F0' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            function updateUI() {
+                const s = PHARMAFLOW_DATA.shipments.find(x => x.id === currentShipId);
+                if (!s) return;
+
+                document.getElementById('big-temp').textContent = s.current_temp + '°C';
+                document.getElementById('big-setpoint').textContent = s.setpoint + '.0';
+                document.getElementById('status-tag').textContent = s.status.replace('_', ' ').toUpperCase();
+
+                const slider = document.getElementById('setpoint-slider');
+                const minEl = document.getElementById('slider-min');
+                const maxEl = document.getElementById('slider-max');
+                const lockIcon = document.getElementById('lock-icon');
+                const lockMsg = document.getElementById('lock-msg');
+
+                if (s.temp_band === '2-8°C') { slider.min = 1; slider.max = 10; }
+                else if (s.temp_band === '-20°C') { slider.min = -25; slider.max = -15; }
+                else { slider.min = -75; slider.max = -65; }
+
+                slider.value = s.setpoint;
+                minEl.textContent = slider.min + '°C';
+                maxEl.textContent = slider.max + '°C';
+
+                if (s.status === 'in_transit' || s.status === 'at_risk') {
+                    slider.disabled = true;
+                    lockIcon.className = 'lucide lucide-lock';
+                    lockMsg.textContent = 'Setpoint locked while in transit.';
+                } else {
+                    slider.disabled = false;
+                    lockIcon.className = 'lucide lucide-unlock';
+                    lockMsg.textContent = 'Operational control available.';
+                }
+                lucide.createIcons();
+
+                // Alert
+                const alertTicker = document.getElementById('excursion-alert');
+                if (Math.abs(s.current_temp - s.setpoint) > 2.0) {
+                    alertTicker.classList.remove('hidden');
+                    document.getElementById('alert-temp').textContent = s.current_temp + '°C';
+                    document.getElementById('alert-band').textContent = s.temp_band;
+                } else {
+                    alertTicker.classList.add('hidden');
+                }
+            }
+
+            shipSelect.addEventListener('change', (e) => {
+                currentShipId = e.target.value;
+                initChart();
+                updateUI();
+            });
+
+            // Simulation
+            setInterval(() => {
+                const s = PHARMAFLOW_DATA.shipments.find(x => x.id === currentShipId);
+                if (s.id === 'SHP002') s.current_temp += (Math.random() * 0.4 - 0.1);
+                else s.current_temp = s.setpoint + (Math.random() * 0.6 - 0.3);
+
+                s.current_temp = parseFloat(s.current_temp.toFixed(1));
+
+                updateUI();
+                if (chart) {
+                    chart.data.datasets[0].data.push(s.current_temp);
+                    chart.data.datasets[0].data.shift();
+                    chart.update('none');
+                }
+            }, 3000);
+
+            window.downloadCSV = () => {
+                const s = PHARMAFLOW_DATA.shipments.find(x => x.id === currentShipId);
+                const data = PHARMAFLOW_DATA.temperature_logs[currentShipId];
+                let csv = 'TimeIndex,Temperature_Celsius\n';
+                data.forEach((v, i) => csv += `${i}m ago,${v}\n`);
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `PharmaFlow_Log_${s.id}.csv`;
+                a.click();
+            };
+
+            initChart();
+            updateUI();
+        }
+    </script>
+<script src="js/glowing-effect.js"></script>
+</body>
+
+</html>
